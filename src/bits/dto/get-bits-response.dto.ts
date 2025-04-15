@@ -1,11 +1,9 @@
+import { Channel } from 'src/common/entities/channel.entity';
+
 export class GetBitsResponseDto {
   data: {
     timeframe: number;
     avgBits: number;
-    channels: {
-      name: string;
-      url: string;
-      profileImg: string;
-    }[];
+    channels: Channel[];
   };
 }
