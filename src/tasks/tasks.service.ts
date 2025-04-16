@@ -7,6 +7,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { RedisService } from 'src/redis/redis.service';
 
 import { GetTotalMessagesAndBitsDto } from './dto/get-total-messages-and-bits.dto';
+import { TOTAL_MESSAGES_AND_BITS_KEY } from 'src/common/constants';
 
 @Injectable()
 export class TasksService {
@@ -49,6 +50,6 @@ export class TasksService {
 
     const data = result[0];
 
-    await this.redisService.set('total_messages_and_bits', data);
+    await this.redisService.set(TOTAL_MESSAGES_AND_BITS_KEY, data);
   }
 }

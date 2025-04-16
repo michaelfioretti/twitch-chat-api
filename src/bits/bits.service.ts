@@ -1,23 +1,34 @@
 import { Injectable } from '@nestjs/common';
 import { GetBitsDto } from './dto/get-bits.dto';
 import { GetBitsResponseDto } from './dto/get-bits-response.dto';
+import { RedisService } from 'src/redis/redis.service';
+import { TOTAL_MESSAGES_AND_BITS_KEY } from 'src/common/constants';
 
 @Injectable()
 export class BitsService {
-  private bits = {
-    timeframe: 100,
-    avgBits: 100,
-    channels: [
-      {
-        name: 'streamer name',
-        url: 'streamer img',
-        profileImg: 'streamer profile img',
-      },
-    ],
-  };
+  constructor(private readonly redisService: RedisService) {}
 
-  getBits(getBitsDto: GetBitsDto): GetBitsResponseDto {
+  async getBits(getBitsDto: GetBitsDto): Promise<any> {
     console.log(getBitsDto);
-    return { data: this.bits };
+    // First check redis
+    const redisData = await this.redisService.get(TOTAL_MESSAGES_AND_BITS_KEY);
+    if (redisData) {
+      console.log(redisData)
+      return {
+        data: {
+          timeframe: 0,
+          channels: [],
+          avgBits: 1,
+        },
+      };
+    }
+
+    return {
+      data: {
+        timeframe: 100,
+        channels: [],
+        avgBits: 100,
+      },
+    };
   }
 }
