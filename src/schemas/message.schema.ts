@@ -33,4 +33,4 @@ export class Message {
   subscribed: Date;
 }
 
-export const MessagSchema = SchemaFactory.createForClass(Message);
+export const MessageSchema = SchemaFactory.createForClass(Message);

@@ -26,7 +26,7 @@ export class GetBitsDto {
   @IsArray()
   @ArrayNotEmpty()
   @IsString({ each: true })
-  channels?: string[];
+  channels?: string;
 
   @IsOptional()
   @Type(() => Number)
