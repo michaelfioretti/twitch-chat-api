@@ -1,8 +1,10 @@
 /* eslint-disable @typescript-eslint/no-unsafe-call */
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 import { Module } from '@nestjs/common';
-import { MongooseModule } from '@nestjs/mongoose';
 import { ScheduleModule } from '@nestjs/schedule';
+
+import { MongooseModule } from '@nestjs/mongoose';
+import { Message, MessageSchema } from './schemas/message.schema';
 
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
@@ -20,6 +22,7 @@ import { TasksService } from './tasks/tasks.service';
     MongooseModule.forRoot(
       `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASSWORD}@cluster0.z9zf2.mongodb.net/${process.env.DB_NAME}?retryWrites=true&w=majority&appName=Cluster0`,
     ),
+    MongooseModule.forFeature([{ name: Message.name, schema: MessageSchema }]),
   ],
   controllers: [AppController],
   providers: [AppService, RedisService, BitsService, TasksService],
