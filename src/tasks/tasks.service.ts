@@ -6,6 +6,8 @@ import { Message } from 'src/schemas/message.schema';
 import { InjectModel } from '@nestjs/mongoose';
 import { RedisService } from 'src/redis/redis.service';
 
+import { GetTotalMessagesAndBitsDto } from './dto/get-total-messages-and-bits.dto';
+
 @Injectable()
 export class TasksService {
   private readonly logger = new Logger(TasksService.name);
@@ -27,7 +29,7 @@ export class TasksService {
 
   async updateTotalMessageCountAndAverageBits() {
     const result = await this.messageModel
-      .aggregate<{ totalRecords: number; totalBits: number }>([
+      .aggregate<GetTotalMessagesAndBitsDto>([
         {
           $group: {
             _id: null,
