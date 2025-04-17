@@ -53,6 +53,7 @@ export class ChatService {
             _id: null,
             totalMessages: { $sum: 1 },
             channels: { $addToSet: '$channel' },
+            users: { $addToSet: '$username' },
           },
         },
         {
@@ -60,6 +61,7 @@ export class ChatService {
             _id: 0,
             totalMessages: 1,
             channels: 1,
+            users: 1,
           },
         },
       ])
@@ -70,6 +72,7 @@ export class ChatService {
       totalMsg: 0,
       avgMsg: 0,
       channels: channels?.split(',') || [],
+      users: [],
     };
 
     if (!result || result.length === 0) {
@@ -88,6 +91,7 @@ export class ChatService {
         2,
       ),
       channels: dbData.channels,
+      users: dbData.users.length,
     };
 
     await this.redisService.set(redisKey, avgMsgData, GET_CHAT_TTL_SECONDS);
