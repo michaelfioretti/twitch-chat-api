@@ -11,3 +11,7 @@ export const TOTAL_MESSAGES_AND_BITS_TTL_SECONDS = 300;
 // Bits service
 export const GET_BITS_KEY = 'bits';
 export const GET_BITS_TTL_SECONDS = 300;
+
+// Chat service
+export const GET_CHAT_KEY = 'chat';
+export const GET_CHAT_TTL_SECONDS = 300;

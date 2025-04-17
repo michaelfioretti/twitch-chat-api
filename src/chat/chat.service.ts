@@ -1,25 +1,21 @@
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-
-import { RedisService } from 'src/redis/redis.service';
-
 import { Model } from 'mongoose';
+import { RedisService } from 'src/redis/redis.service';
 import { Message } from 'src/schemas/message.schema';
-
-import { GetBitsDto } from './dto/get-bits.dto';
-import { GetBitsResponseDto } from './dto/get-bits-response.dto';
-
+import { GetChatDto } from './dto/get-chat.dto';
+import { GetChatResponseDto } from './dto/get-chat-response.dto';
 import {
-  GET_BITS_KEY,
-  GET_BITS_TTL_SECONDS,
+  GET_CHAT_KEY,
+  GET_CHAT_TTL_SECONDS,
   MAX_TIMEFRAME,
 } from 'src/common/constants';
 
 @Injectable()
-export class BitsService {
-  private readonly logger = new Logger(BitsService.name);
+export class ChatService {
+  private readonly logger = new Logger(ChatService.name);
 
   constructor(
     @InjectModel(Message.name)
@@ -27,8 +23,8 @@ export class BitsService {
     private readonly redisService: RedisService,
   ) {}
 
-  async getBits(getBitsDto: GetBitsDto): Promise<GetBitsResponseDto> {
-    const redisKey = this.redisService.buildKey(GET_BITS_KEY, getBitsDto);
+  async getChat(getChatDto: GetChatDto): Promise<GetChatResponseDto> {
+    const redisKey = this.redisService.buildKey(GET_CHAT_KEY, getChatDto);
     const redisStr = await this.redisService.get(redisKey);
     if (redisStr) {
       return {
@@ -36,10 +32,9 @@ export class BitsService {
       };
     }
 
-    // Filter messages by the channels provided in the request and timeframe
     const matchStage: Record<string, any> = {};
 
-    const { channels, timeframe } = getBitsDto;
+    const { channels, timeframe } = getChatDto;
 
     if (timeframe) {
       const since = new Date(Date.now() - timeframe * 1000);
@@ -56,48 +51,49 @@ export class BitsService {
         {
           $group: {
             _id: null,
-            totalBits: { $sum: '$bits' },
+            totalMessages: { $sum: 1 },
             channels: { $addToSet: '$channel' },
           },
         },
         {
           $project: {
             _id: 0,
-            totalBits: 1,
+            totalMessages: 1,
             channels: 1,
           },
         },
       ])
       .exec();
 
-    let avgBitsData = {
+    let avgMsgData = {
       timeframe: timeframe || MAX_TIMEFRAME,
-      totalBits: 0,
-      avgBits: 0,
+      totalMsg: 0,
+      avgMsg: 0,
       channels: channels?.split(',') || [],
     };
 
-    await this.redisService.set(redisKey, avgBitsData, GET_BITS_TTL_SECONDS);
-
     if (!result || result.length === 0) {
-      this.logger.warn('Query returned no results. Redis key: ', redisKey);
+      this.logger.warn('No messages found for the given criteria: ', redisKey);
       return {
-        data: avgBitsData,
+        data: avgMsgData,
       };
     }
 
     const dbData = result[0];
-    avgBitsData = {
+
+    avgMsgData = {
       timeframe: timeframe || MAX_TIMEFRAME,
+      totalMsg: dbData.totalMessages,
+      avgMsg: +(dbData.totalMessages / (dbData.channels.length || 1)).toFixed(
+        2,
+      ),
       channels: dbData.channels,
-      totalBits: dbData.totalBits,
-      avgBits: +(dbData.totalBits / (dbData.channels.length || 1)).toFixed(2),
     };
 
-    await this.redisService.set(redisKey, avgBitsData, GET_BITS_TTL_SECONDS);
+    await this.redisService.set(redisKey, avgMsgData, GET_CHAT_TTL_SECONDS);
 
     return {
-      data: avgBitsData,
+      data: avgMsgData,
     };
   }
 }
