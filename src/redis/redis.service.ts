@@ -19,11 +19,26 @@ export class RedisService implements OnModuleInit {
     return this.client.get(key);
   }
 
-  async set(key: string, value: any): Promise<void> {
+  async set(key: string, value: any, ex?: number): Promise<void> {
+    if (ex) {
+      await this.client.set(key, JSON.stringify(value), 'EX', ex);
+      return;
+    }
+
     await this.client.set(key, JSON.stringify(value));
   }
 
   async del(key: string): Promise<void> {
     await this.client.del(key);
+  }
+
+  buildKey(key: string, obj: Record<string, any>): string {
+    if (!Object.keys(obj).length) {
+      return key;
+    }
+
+    const sortedKeys = Object.keys(obj).sort();
+    const keyParts = sortedKeys.map((k) => `${k}:${obj[k]}`);
+    return `${key}:${keyParts.join(':')}`;
   }
 }

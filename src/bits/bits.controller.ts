@@ -9,7 +9,6 @@ export class BitsController {
 
   @Get()
   getBits(@Query() getBitsDto: GetBitsDto): Promise<GetBitsResponseDto> {
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-return
     return this.bitsService.getBits(getBitsDto);
   }
 }

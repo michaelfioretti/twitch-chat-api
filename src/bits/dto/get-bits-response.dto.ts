@@ -1,9 +1,8 @@
-import { Channel } from 'src/common/entities/channel.entity';
-
 export class GetBitsResponseDto {
   data: {
     timeframe: number;
+    totalBits: number;
     avgBits: number;
-    channels: Channel[];
+    channels: string[];
   };
 }
