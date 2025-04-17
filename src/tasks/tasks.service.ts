@@ -6,11 +6,10 @@ import { Message } from 'src/schemas/message.schema';
 import { InjectModel } from '@nestjs/mongoose';
 import { RedisService } from 'src/redis/redis.service';
 
-import { GetTotalMessagesAndBitsDto } from './dto/get-total-messages-and-bits.dto';
-import {
-  TOTAL_MESSAGES_AND_BITS_KEY,
-  TOTAL_MESSAGES_AND_BITS_TTL_SECONDS,
-} from 'src/common/constants';
+// import {
+//   TOTAL_MESSAGES_AND_BITS_KEY,
+//   TOTAL_MESSAGES_AND_BITS_TTL_SECONDS,
+// } from 'src/common/constants';
 
 @Injectable()
 export class TasksService {
@@ -37,32 +36,5 @@ export class TasksService {
    *
    * @returns A promise that resolves when the data has been successfully updated in Redis.
    */
-  async updateTotalMessageCountAndAverageBits() {
-    const result = await this.messageModel
-      .aggregate<GetTotalMessagesAndBitsDto>([
-        {
-          $group: {
-            _id: null,
-            totalRecords: { $sum: 1 },
-            totalBits: { $sum: '$bits' },
-          },
-        },
-        {
-          $project: {
-            _id: 0,
-            totalRecords: 1,
-            totalBits: 1,
-          },
-        },
-      ])
-      .exec();
-
-    const data = result[0];
-
-    await this.redisService.set(
-      TOTAL_MESSAGES_AND_BITS_KEY,
-      data,
-      TOTAL_MESSAGES_AND_BITS_TTL_SECONDS,
-    );
-  }
+  async updateTotalMessageCountAndAverageBits() {}
 }

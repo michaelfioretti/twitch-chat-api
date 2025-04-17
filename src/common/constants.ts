@@ -1,12 +1,15 @@
 // Validation
 export const MAX_TIMEFRAME = 86400;
 
+// General
+export const TWITCH_TV_URL = 'https://www.twitch.tv/';
+
 // Redis keys
 export const CACHE_TTL_SECONDS = 300;
 
-// General
-export const TOTAL_MESSAGES_AND_BITS_KEY = 'total_messages_and_bits';
-export const TOTAL_MESSAGES_AND_BITS_TTL_SECONDS = 300;
+// Top 10
+export const TOP_TEN_STREAMERS_KEY = 'top_ten_streamers';
+export const TOP_TEN_STREAMERS_KEY_TTL_SECONDS = 3600;
 
 // Bits service
 export const GET_BITS_KEY = 'bits';

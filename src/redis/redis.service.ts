@@ -32,7 +32,11 @@ export class RedisService implements OnModuleInit {
     await this.client.del(key);
   }
 
-  buildKey(key: string, obj: Record<string, any>): string {
+  buildKey(key: string, obj?: Record<string, any>): string {
+    if (!obj) {
+      return key;
+    }
+
     if (!Object.keys(obj).length) {
       return key;
     }

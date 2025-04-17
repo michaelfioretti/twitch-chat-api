@@ -14,6 +14,7 @@ import { RedisService } from './redis/redis.service';
 import { BitsService } from './bits/bits.service';
 import { TasksService } from './tasks/tasks.service';
 import { ChatModule } from './chat/chat.module';
+import { StreamerModule } from './streamer/streamer.module';
 
 @Module({
   imports: [
@@ -25,6 +26,7 @@ import { ChatModule } from './chat/chat.module';
     ),
     MongooseModule.forFeature([{ name: Message.name, schema: MessageSchema }]),
     ChatModule,
+    StreamerModule,
   ],
   controllers: [AppController],
   providers: [AppService, RedisService, BitsService, TasksService],
