@@ -9,7 +9,7 @@ import {
   TOP_TEN_STREAMERS_KEY_TTL_SECONDS,
   TWITCH_TV_URL,
 } from 'src/common/constants';
-import { Streamer } from 'src/common/entities/streamer.entity';
+import { MongoStreamerData } from 'src/common/entities/mongo-streamer-data';
 
 @Injectable()
 export class StreamerService {
@@ -25,7 +25,7 @@ export class StreamerService {
     const redisStr = await this.redisService.get(redisKey);
     if (redisStr) {
       // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-      const parsedData: Streamer[] = JSON.parse(redisStr);
+      const parsedData: MongoStreamerData[] = JSON.parse(redisStr);
 
       return {
         data: parsedData,
@@ -89,7 +89,7 @@ export class StreamerService {
       ])
       .exec();
 
-    const top10Streamers = result.map((streamer: Streamer) => {
+    const top10Streamers = result.map((streamer: MongoStreamerData) => {
       return {
         ...streamer,
         profile: `${TWITCH_TV_URL}${streamer.name}`,

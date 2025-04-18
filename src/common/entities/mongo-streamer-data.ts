@@ -1,4 +1,4 @@
-export class Streamer {
+export class MongoStreamerData {
   name: string;
   profile: string;
   modPercentage: number;

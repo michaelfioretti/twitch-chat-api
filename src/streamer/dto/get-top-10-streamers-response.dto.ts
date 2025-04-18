@@ -1,5 +1,5 @@
-import { Streamer } from 'src/common/entities/streamer.entity';
+import { MongoStreamerData } from 'src/common/entities/mongo-streamer-data';
 
 export class GetTop10StreamersResponseDto {
-  data: Streamer[];
+  data: MongoStreamerData[];
 }

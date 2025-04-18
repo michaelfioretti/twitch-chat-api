@@ -1,5 +1,5 @@
 import { Injectable, Logger } from '@nestjs/common';
-// import { Cron } from '@nestjs/schedule';
+import { Cron } from '@nestjs/schedule';
 import { Model } from 'mongoose';
 
 import { Message } from 'src/schemas/message.schema';
@@ -11,12 +11,8 @@ import {
   TWITCH_USER_PROFILE_IMG_URL,
 } from 'src/common/constants';
 import axios, { AxiosResponse } from 'axios';
-import { TwitchOauthResponse } from 'src/common/entities/twitch-oauth-response.entity';
-
-// import {
-//   TOTAL_MESSAGES_AND_BITS_KEY,
-//   TOTAL_MESSAGES_AND_BITS_TTL_SECONDS,
-// } from 'src/common/constants';
+import { TwitchOauthResponse } from 'src/common/entities/twitch/twitch-oauth-response.entity';
+import { TwitchStreamerInfoResponse } from 'src/common/entities/twitch/twitch-streamer-info-response.entity';
 
 @Injectable()
 export class TasksService {
@@ -27,26 +23,26 @@ export class TasksService {
     private readonly redisService: RedisService,
   ) {
     this.logger.debug('TasksService initialized');
-    // this.getStreamerProfileImages();
   }
 
-  // @Cron('*/5 * * * *')
-  async getStreamerProfileImages() {
-    this.logger.debug('Fetching streamer profile images...');
-    // First, let's get all of the unique streamers in the database
+  @Cron('*/5 * * * *')
+  async getStreamerMetadata() {
+    this.logger.debug(
+      'Fetching streamer metadata (profile image, description, etc)',
+    );
+
     const streamers = await this.messageModel.distinct('channel').exec();
     this.logger.debug(`Found ${streamers.length} unique streamers`);
-    // Now we can fetch the profile images for each streamer
+
     const accessToken = await this.getTwitchAccessToken();
-    this.logger.debug(`Fetched Twitch access token: ${accessToken}`);
-    // Divide into groups of 100
+
     const chunks: string[][] = [];
     for (let i = 0; i < streamers.length; i += MAX_STREAMERS_PER_USER_REQUEST) {
       chunks.push(streamers.slice(i, i + MAX_STREAMERS_PER_USER_REQUEST));
     }
 
     this.logger.debug(`Divided streamers into ${chunks.length} chunks`);
-    // Now we can fetch the profile images for each chunk
+
     const results: AxiosResponse[] = await Promise.all(
       chunks.map((chunk) =>
         axios.get(TWITCH_USER_PROFILE_IMG_URL, {
@@ -59,14 +55,18 @@ export class TasksService {
       ),
     );
 
-    const flattenedResults = results.flatMap((result) => result.data.data);
+    const flattenedResults = results.flatMap(
+      (result: AxiosResponse<TwitchStreamerInfoResponse>) => result.data.data,
+    );
+
     this.logger.debug(`Fetched ${flattenedResults.length} profile images`);
-    // Update cache
+
     const msetData = {};
     for (const streamer of flattenedResults) {
-      console.log(streamer);
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
       msetData[`streamer:image:${streamer.login}`] = streamer.profile_image_url;
+      msetData[`streamer:description:${streamer.login}`] = streamer.description;
+      msetData[`streamer:broadcaster_type:${streamer.login}`] =
+        streamer.broadcaster_type;
     }
 
     await this.redisService.mset(msetData);
