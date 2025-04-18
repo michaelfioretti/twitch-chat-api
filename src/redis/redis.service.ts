@@ -28,6 +28,20 @@ export class RedisService implements OnModuleInit {
     await this.client.set(key, JSON.stringify(value));
   }
 
+  async mset(keyValues: Record<string, any>, ex?: number): Promise<void> {
+    const pipeline = this.client.pipeline();
+
+    for (const [key, value] of Object.entries(keyValues)) {
+      if (ex) {
+        pipeline.set(key, JSON.stringify(value), 'EX', ex);
+      } else {
+        pipeline.set(key, JSON.stringify(value));
+      }
+    }
+
+    await pipeline.exec();
+  }
+
   async del(key: string): Promise<void> {
     await this.client.del(key);
   }
