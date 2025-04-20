@@ -3,15 +3,15 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { RedisService } from 'src/redis/redis.service';
-import { Message } from 'src/schemas/message.schema';
+import { RedisService } from '../redis/redis.service';
+import { Message } from '../schemas/message.schema';
 import { GetChatDto } from './dto/get-chat.dto';
 import { GetChatResponseDto } from './dto/get-chat-response.dto';
 import {
   GET_CHAT_KEY,
   GET_CHAT_TTL_SECONDS,
   MAX_TIMEFRAME,
-} from 'src/common/constants';
+} from '../common/constants';
 
 @Injectable()
 export class ChatService {

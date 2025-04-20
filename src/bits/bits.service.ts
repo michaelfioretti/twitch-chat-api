@@ -1,21 +1,20 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
+
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-
-import { RedisService } from 'src/redis/redis.service';
-
 import { Model } from 'mongoose';
-import { Message } from 'src/schemas/message.schema';
 
-import { GetBitsDto } from './dto/get-bits.dto';
-import { GetBitsResponseDto } from './dto/get-bits-response.dto';
+import { RedisService } from '../redis/redis.service';
+import { Message } from '../schemas/message.schema';
+import { GetBitsDto } from '@src/bits/dto/get-bits.dto';
+import { GetBitsResponseDto } from '@src/bits/dto/get-bits-response.dto';
 
 import {
   GET_BITS_KEY,
   GET_BITS_TTL_SECONDS,
   MAX_TIMEFRAME,
-} from 'src/common/constants';
+} from '../common/constants';
 
 @Injectable()
 export class BitsService {

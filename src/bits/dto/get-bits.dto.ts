@@ -10,7 +10,7 @@ import {
   IsNotEmpty,
 } from 'class-validator';
 import { Type, Transform } from 'class-transformer';
-import { MAX_TIMEFRAME } from 'src/common/constants';
+import { MAX_TIMEFRAME } from '../../common/constants';
 
 export class GetBitsDto {
   @IsOptional()

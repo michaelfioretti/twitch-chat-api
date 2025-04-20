@@ -1,15 +1,15 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { RedisService } from 'src/redis/redis.service';
-import { Message } from 'src/schemas/message.schema';
+import { RedisService } from '../redis/redis.service';
+import { Message } from '../schemas/message.schema';
 import { GetTop10StreamersResponseDto } from './dto/get-top-10-streamers-response.dto';
 import {
   TOP_TEN_STREAMERS_KEY,
   TOP_TEN_STREAMERS_KEY_TTL_SECONDS,
   TWITCH_TV_URL,
-} from 'src/common/constants';
-import { MongoStreamerData } from 'src/common/entities/mongo-streamer-data';
+} from '../common/constants';
+import { MongoStreamerData } from '../common/entities/mongo-streamer-data';
 
 @Injectable()
 export class StreamerService {
