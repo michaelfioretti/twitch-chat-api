@@ -9,7 +9,7 @@ import {
   TOP_TEN_STREAMERS_KEY_TTL_SECONDS,
   TWITCH_TV_URL,
 } from '../common/constants';
-import { MongoStreamerData } from '../common/entities/mongo-streamer-data';
+import { MongoStreamerData } from '../common/entities/mongo-streamer-data.entity';
 
 @Injectable()
 export class StreamerService {

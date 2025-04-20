@@ -1,25 +1,21 @@
-/* eslint-disable @typescript-eslint/no-unsafe-call */
-/* eslint-disable @typescript-eslint/no-unsafe-member-access */
 import { Module } from '@nestjs/common';
 import { ScheduleModule } from '@nestjs/schedule';
 import { ThrottlerModule } from '@nestjs/throttler';
 import { ConfigModule } from '@nestjs/config';
 
 import { MongooseModule } from '@nestjs/mongoose';
-import { Message, MessageSchema } from './schemas/message.schema';
+import { Message, MessageSchema } from '@src/schemas/message.schema';
 
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
-import { BitsModule } from './bits/bits.module';
-import { RedisService } from './redis/redis.service';
-import { BitsService } from './bits/bits.service';
-import { TasksService } from './tasks/tasks.service';
-import { ChatModule } from './chat/chat.module';
-import { StreamerModule } from './streamer/streamer.module';
+import { BitsModule } from '@src/bits/bits.module';
+import { RedisService } from '@src/redis/redis.service';
+import { BitsService } from '@src/bits/bits.service';
+import { TasksService } from '@src/tasks/tasks.service';
+import { ChatModule } from '@src/chat/chat.module';
+import { StreamerModule } from '@src/streamer/streamer.module';
 import {
   MAX_REQUEST_PER_IP,
   MAX_REQUEST_PER_IP_TTL_SECONDS,
-} from './common/constants';
+} from '@src/common/constants';
 
 @Module({
   imports: [
@@ -41,7 +37,7 @@ import {
     ChatModule,
     StreamerModule,
   ],
-  controllers: [AppController],
-  providers: [AppService, RedisService, BitsService, TasksService],
+  controllers: [],
+  providers: [RedisService, BitsService, TasksService],
 })
 export class AppModule {}
