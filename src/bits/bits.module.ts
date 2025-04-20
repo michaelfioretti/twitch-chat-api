@@ -4,7 +4,7 @@ import { ThrottlerGuard } from '@nestjs/throttler';
 
 import { BitsService } from './bits.service';
 import { BitsController } from './bits.controller';
-import { RedisService } from 'src/redis/redis.service';
+import { RedisService } from '../redis/redis.service';
 import { MongooseModule } from '@nestjs/mongoose';
 import { Message, MessageSchema } from 'src/schemas/message.schema';
 

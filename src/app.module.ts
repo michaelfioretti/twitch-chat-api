@@ -3,6 +3,7 @@
 import { Module } from '@nestjs/common';
 import { ScheduleModule } from '@nestjs/schedule';
 import { ThrottlerModule } from '@nestjs/throttler';
+import { ConfigModule } from '@nestjs/config';
 
 import { MongooseModule } from '@nestjs/mongoose';
 import { Message, MessageSchema } from './schemas/message.schema';
@@ -10,7 +11,6 @@ import { Message, MessageSchema } from './schemas/message.schema';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { BitsModule } from './bits/bits.module';
-import { ConfigModule } from '@nestjs/config';
 import { RedisService } from './redis/redis.service';
 import { BitsService } from './bits/bits.service';
 import { TasksService } from './tasks/tasks.service';

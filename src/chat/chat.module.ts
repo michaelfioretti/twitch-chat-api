@@ -6,7 +6,7 @@ import { ChatService } from './chat.service';
 import { ChatController } from './chat.controller';
 import { MongooseModule } from '@nestjs/mongoose';
 import { Message, MessageSchema } from 'src/schemas/message.schema';
-import { RedisService } from 'src/redis/redis.service';
+import { RedisService } from '../redis/redis.service';
 
 @Module({
   controllers: [ChatController],

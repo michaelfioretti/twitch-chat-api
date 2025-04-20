@@ -25,6 +25,12 @@ export class TasksService {
     this.logger.debug('TasksService initialized');
   }
 
+  async onModuleInit() {
+    if (process.env.NODE_ENV !== 'development') {
+      await this.getStreamerMetadata();
+    }
+  }
+
   @Cron('*/5 * * * *')
   async getStreamerMetadata() {
     this.logger.debug(
@@ -63,10 +69,11 @@ export class TasksService {
 
     const msetData = {};
     for (const streamer of flattenedResults) {
-      msetData[`streamer:image:${streamer.login}`] = streamer.profile_image_url;
-      msetData[`streamer:description:${streamer.login}`] = streamer.description;
-      msetData[`streamer:broadcaster_type:${streamer.login}`] =
-        streamer.broadcaster_type;
+      msetData[`streamer:meta:${streamer.login}`] = JSON.stringify({
+        image: streamer.profile_image_url,
+        description: streamer.description,
+        broadcasterType: streamer.broadcaster_type,
+      });
     }
 
     await this.redisService.mset(msetData);

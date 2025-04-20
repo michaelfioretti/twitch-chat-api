@@ -1,9 +1,10 @@
 import { Test, TestingModule } from '@nestjs/testing';
+import { getModelToken } from '@nestjs/mongoose';
+
 import { BitsController } from './bits.controller';
 import { BitsService } from './bits.service';
 import { RedisService } from '../redis/redis.service';
 import { Message } from '../schemas/message.schema';
-import { getModelToken } from '@nestjs/mongoose';
 
 describe('BitsController', () => {
   let controller: BitsController;

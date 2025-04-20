@@ -1,4 +1,3 @@
-// redis.service.ts
 import { Injectable, OnModuleInit } from '@nestjs/common';
 import Redis from 'ioredis';
 
@@ -7,12 +6,17 @@ export class RedisService implements OnModuleInit {
   private client: Redis;
 
   onModuleInit() {
-    // const port = parseInt(process.env.REDIS_PORT || '6379', 10);
-    // console.log('redis port: ', port);
-    // const host = process.env.REDIS_HOST || '127.0.0.1';
-    // console.log('redis host: ', host);
-    // this.client = new Redis(port, host);
-    this.client = new Redis();
+    if (process.env.NODE_ENV === 'development') {
+      this.client = new Redis();
+      return;
+    }
+
+    this.client = new Redis({
+      host: process.env.REDIS_HOST,
+      username: process.env.REDIS_USERNAME,
+      password: process.env.REDIS_PASSWORD,
+      port: Number(process.env.REDIS_PORT),
+    });
   }
 
   async get(key: string): Promise<string | null> {
@@ -28,18 +32,8 @@ export class RedisService implements OnModuleInit {
     await this.client.set(key, JSON.stringify(value));
   }
 
-  async mset(keyValues: Record<string, any>, ex?: number): Promise<void> {
-    const pipeline = this.client.pipeline();
-
-    for (const [key, value] of Object.entries(keyValues)) {
-      if (ex) {
-        pipeline.set(key, JSON.stringify(value), 'EX', ex);
-      } else {
-        pipeline.set(key, JSON.stringify(value));
-      }
-    }
-
-    await pipeline.exec();
+  async mset(data: Record<string, string>): Promise<void> {
+    await this.client.mset(...Object.entries(data).flat());
   }
 
   async del(key: string): Promise<void> {
