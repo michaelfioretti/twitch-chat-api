@@ -74,6 +74,13 @@
     "transform": {
       "^.+\\.(t|j)s$": "ts-jest"
     },
+    "coveragePathIgnorePatterns": [
+      ".*\\.module\\.ts$",
+      "main\\.ts$",
+      "config\\.(t|j)s$",
+      ".*\\.entity\\.(t|j)s$",
+      ".*-response\\.dto\\.(t|j)s$"
+    ],
     "collectCoverageFrom": [
       "**/*.(t|j)s"
     ],

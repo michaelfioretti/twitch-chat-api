@@ -36,10 +36,6 @@ export class RedisService implements OnModuleInit {
     await this.client.mset(...Object.entries(data).flat());
   }
 
-  async del(key: string): Promise<void> {
-    await this.client.del(key);
-  }
-
   buildKey(key: string, obj?: Record<string, any>): string {
     if (!obj) {
       return key;

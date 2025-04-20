@@ -31,7 +31,7 @@ export class TasksService {
     }
   }
 
-  @Cron('*/5 * * * *')
+  @Cron('*/30 * * * *')
   async getStreamerMetadata() {
     this.logger.debug(
       'Fetching streamer metadata (profile image, description, etc)',
