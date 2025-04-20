@@ -1,0 +1,33 @@
+name: Build and Redeploy to Production
+
+on:
+  pull_request:
+    branches: ["main"]
+    types: ["closed"]
+
+jobs:
+  # Build and test the program
+  build-and-test:
+    if: github.event.pull_request.merged == true
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 'latest'
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Generate coverage report
+        run: npm run test:cov
+
+      - name: Upload coverage reports to Codecov
+        uses: codecov/codecov-action@v5
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          slug: michaelfioretti/twitch-chat-api
