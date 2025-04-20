@@ -1,6 +1,10 @@
 // Validation
 export const MAX_TIMEFRAME = 86400;
 
+// Rate limiting
+export const MAX_REQUEST_PER_IP = 25;
+export const MAX_REQUEST_PER_IP_TTL_SECONDS = 60;
+
 // Twitch
 export const TWITCH_TV_URL = 'https://www.twitch.tv/';
 export const TWITCH_USER_PROFILE_IMG_URL = 'https://api.twitch.tv/helix/users';
