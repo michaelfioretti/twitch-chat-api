@@ -6,6 +6,8 @@ import { ConfigModule } from '@nestjs/config';
 import { MongooseModule } from '@nestjs/mongoose';
 import { Message, MessageSchema } from '@src/schemas/message.schema';
 
+import { AppController } from '@src/app.controller';
+import { AppService } from '@src/app.service';
 import { BitsModule } from '@src/bits/bits.module';
 import { RedisService } from '@src/redis/redis.service';
 import { BitsService } from '@src/bits/bits.service';
@@ -37,7 +39,7 @@ import {
     ChatModule,
     StreamerModule,
   ],
-  controllers: [],
-  providers: [RedisService, BitsService, TasksService],
+  controllers: [AppController],
+  providers: [AppService, RedisService, BitsService, TasksService],
 })
 export class AppModule {}
