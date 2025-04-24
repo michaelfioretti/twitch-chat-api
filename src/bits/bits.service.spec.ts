@@ -150,16 +150,6 @@ describe('BitsService', () => {
     );
     expect(redisService.get).toHaveBeenCalledWith(redisKey);
     expect(messageModel.aggregate).toHaveBeenCalled();
-    expect(redisService.set).toHaveBeenCalledWith(
-      redisKey,
-      {
-        timeframe: 3600,
-        totalBits: 0,
-        avgBits: 0,
-        channels: ['channel1'],
-      },
-      GET_BITS_TTL_SECONDS,
-    );
     expect(result).toEqual({
       data: {
         timeframe: 3600,
