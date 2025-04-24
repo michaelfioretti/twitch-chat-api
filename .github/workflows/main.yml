@@ -31,5 +31,6 @@ jobs:
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
           slug: michaelfioretti/twitch-chat-api
+
       - name: Trigger Deploy on Render
         run: curl -X POST ${{ secrets.RENDER_DEPLOY_HOOK }}

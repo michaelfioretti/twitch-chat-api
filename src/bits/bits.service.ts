@@ -76,8 +76,6 @@ export class BitsService {
       channels: channels?.split(',') || [],
     };
 
-    await this.redisService.set(redisKey, avgBitsData, GET_BITS_TTL_SECONDS);
-
     if (!result || result.length === 0) {
       this.logger.warn('Query returned no results. Redis key: ', redisKey);
       return {
