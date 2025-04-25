@@ -3,7 +3,6 @@ import Redis from 'ioredis';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { Message } from '../schemas/message.schema';
-import { Cron } from '@nestjs/schedule';
 
 @Injectable()
 export class RedisService implements OnModuleInit {
@@ -43,20 +42,6 @@ export class RedisService implements OnModuleInit {
 
   async mset(data: Record<string, string>): Promise<void> {
     await this.client.mset(...Object.entries(data).flat());
-  }
-
-  @Cron('*/3 * * * *')
-  async updateMessageStats() {
-    const [totalMessages, uniqueUsers] = await Promise.all([
-      this.messageModel.countDocuments(),
-      this.messageModel.distinct('username'),
-    ]);
-
-    await this.set('stats:messages', {
-      totalMessages,
-      uniqueUsers: uniqueUsers.length,
-      lastUpdated: new Date().toISOString(),
-    });
   }
 
   buildKey(key: string, obj?: Record<string, any>): string {

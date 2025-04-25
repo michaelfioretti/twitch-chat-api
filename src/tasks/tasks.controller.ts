@@ -1,6 +1,6 @@
 import { Controller, Get } from '@nestjs/common';
-import { RedisService } from '../redis/redis.service';
-import { TasksService } from './tasks.service';
+import { RedisService } from '@src/redis/redis.service';
+import { TasksService } from '@src/tasks/tasks.service';
 
 interface RedisStats {
   [key: string]: unknown;

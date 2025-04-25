@@ -9,7 +9,7 @@ import { Message, MessageSchema } from '@src/schemas/message.schema';
 import { AppController } from '@src/app.controller';
 import { AppService } from '@src/app.service';
 import { BitsModule } from '@src/bits/bits.module';
-import { RedisModule } from '@src/redis/redis.module';
+import { RedisService } from '@src/redis/redis.service';
 import { BitsService } from '@src/bits/bits.service';
 import { TasksService } from '@src/tasks/tasks.service';
 import { TasksModule } from '@src/tasks/tasks.module';
@@ -40,9 +40,8 @@ import {
     ChatModule,
     StreamerModule,
     TasksModule,
-    RedisModule,
   ],
   controllers: [AppController],
-  providers: [AppService, BitsService, TasksService],
+  providers: [AppService, RedisService, BitsService, TasksService],
 })
 export class AppModule {}

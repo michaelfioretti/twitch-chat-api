@@ -2,18 +2,18 @@ import { Injectable, Logger } from '@nestjs/common';
 import { Cron } from '@nestjs/schedule';
 import { Model } from 'mongoose';
 
-import { Message } from '@src/schemas/message.schema';
+import { Message } from '../schemas/message.schema';
 import { InjectModel } from '@nestjs/mongoose';
-import { RedisService } from '@src/redis/redis.service';
+import { RedisService } from '../redis/redis.service';
 import {
   MAX_STREAMERS_PER_USER_REQUEST,
   TWITCH_OAUTH_URL,
   TWITCH_USER_PROFILE_IMG_URL,
-} from '@src/common/constants';
+} from '../common/constants';
 import axios, { AxiosResponse } from 'axios';
-import { TwitchOauthResponse } from '@src/common/entities/twitch/twitch-oauth-response.entity';
-import { TwitchStreamerInfoResponse } from '@src/common/entities/twitch/twitch-streamer-info-response.entity';
-import { ChatStats } from '@src/common/entities/get-chat-stats.entity';
+import { TwitchOauthResponse } from '../common/entities/twitch/twitch-oauth-response.entity';
+import { TwitchStreamerInfoResponse } from '../common/entities/twitch/twitch-streamer-info-response.entity';
+import { ChatStats } from '../common/entities/get-chat-stats.entity';
 
 @Injectable()
 export class TasksService {
