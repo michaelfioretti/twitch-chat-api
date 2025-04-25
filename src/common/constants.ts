@@ -25,3 +25,6 @@ export const GET_BITS_TTL_SECONDS = 300;
 // Chat service
 export const GET_CHAT_KEY = 'chat';
 export const GET_CHAT_TTL_SECONDS = 300;
+
+// Stats
+export const TWITCH_CHAT_STATS_KEY = 'chat:stats';

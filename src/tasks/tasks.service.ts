@@ -7,6 +7,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { RedisService } from '../redis/redis.service';
 import {
   MAX_STREAMERS_PER_USER_REQUEST,
+  TWITCH_CHAT_STATS_KEY,
   TWITCH_OAUTH_URL,
   TWITCH_USER_PROFILE_IMG_URL,
 } from '../common/constants';
@@ -29,11 +30,13 @@ export class TasksService {
   async onModuleInit() {
     if (process.env.NODE_ENV !== 'development') {
       await this.getStreamerMetadata();
+      await this.getChatStats();
     }
   }
 
   @Cron('*/3 * * * *')
   async getChatStats() {
+    this.logger.debug('Fetching chat stats');
     const result = await this.messageModel
       .aggregate<ChatStats>([
         {
@@ -61,7 +64,7 @@ export class TasksService {
       uniqueChannels: 0,
     };
 
-    await this.redisService.set('chat:stats', JSON.stringify(stats));
+    await this.redisService.set(TWITCH_CHAT_STATS_KEY, JSON.stringify(stats));
   }
 
   @Cron('*/30 * * * *')
@@ -127,5 +130,20 @@ export class TasksService {
     );
 
     return response.data.access_token;
+  }
+
+  async getStats(): Promise<ChatStats> {
+    const stats = await this.redisService.get(TWITCH_CHAT_STATS_KEY);
+
+    if (!stats) {
+      return {
+        totalMessages: 0,
+        uniqueUsers: 0,
+        uniqueChannels: 0,
+      };
+    }
+
+    const chatStats = JSON.parse(stats) as ChatStats;
+    return chatStats;
   }
 }
