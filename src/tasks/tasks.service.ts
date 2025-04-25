@@ -15,6 +15,7 @@ import axios, { AxiosResponse } from 'axios';
 import { TwitchOauthResponse } from '../common/entities/twitch/twitch-oauth-response.entity';
 import { TwitchStreamerInfoResponse } from '../common/entities/twitch/twitch-streamer-info-response.entity';
 import { ChatStats } from '../common/entities/get-chat-stats.entity';
+import { StreamerMetadata } from '../common/entities/get-streamer-metadata.entity';
 
 @Injectable()
 export class TasksService {
@@ -29,7 +30,7 @@ export class TasksService {
 
   async onModuleInit() {
     if (process.env.NODE_ENV !== 'development') {
-      await this.getStreamerMetadata();
+      await this.loadStreamerMetadata();
       await this.getChatStats();
     }
   }
@@ -68,7 +69,7 @@ export class TasksService {
   }
 
   @Cron('*/30 * * * *')
-  async getStreamerMetadata() {
+  async loadStreamerMetadata() {
     this.logger.debug(
       'Fetching streamer metadata (profile image, description, etc)',
     );
@@ -109,11 +110,18 @@ export class TasksService {
         image: streamer.profile_image_url,
         description: streamer.description,
         broadcasterType: streamer.broadcaster_type,
+        name: streamer.login,
       });
     }
 
     await this.redisService.mset(msetData);
     this.logger.debug(`Updated cache with profile images`);
+  }
+
+  async getStreamerMetadata(): Promise<StreamerMetadata[]> {
+    const keys = await this.redisService.keys('streamer:meta:*');
+    const streamerMetadata = await this.redisService.mget(keys);
+    return streamerMetadata.map((data) => JSON.parse(data) as StreamerMetadata);
   }
 
   async getTwitchAccessToken(): Promise<string> {
