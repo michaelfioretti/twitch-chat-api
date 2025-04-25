@@ -12,6 +12,7 @@ import { BitsModule } from '@src/bits/bits.module';
 import { RedisService } from '@src/redis/redis.service';
 import { BitsService } from '@src/bits/bits.service';
 import { TasksService } from '@src/tasks/tasks.service';
+import { TasksModule } from '@src/tasks/tasks.module';
 import { ChatModule } from '@src/chat/chat.module';
 import { StreamerModule } from '@src/streamer/streamer.module';
 import {
@@ -38,6 +39,7 @@ import {
     BitsModule,
     ChatModule,
     StreamerModule,
+    TasksModule,
   ],
   controllers: [AppController],
   providers: [AppService, RedisService, BitsService, TasksService],

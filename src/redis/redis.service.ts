@@ -1,9 +1,17 @@
 import { Injectable, OnModuleInit } from '@nestjs/common';
 import Redis from 'ioredis';
+import { InjectModel } from '@nestjs/mongoose';
+import { Model } from 'mongoose';
+import { Message } from '../schemas/message.schema';
 
 @Injectable()
 export class RedisService implements OnModuleInit {
   private client: Redis;
+
+  constructor(
+    @InjectModel(Message.name)
+    private readonly messageModel: Model<Message>,
+  ) {}
 
   onModuleInit() {
     if (process.env.NODE_ENV === 'development') {

@@ -7,12 +7,14 @@ import { InjectModel } from '@nestjs/mongoose';
 import { RedisService } from '../redis/redis.service';
 import {
   MAX_STREAMERS_PER_USER_REQUEST,
+  TWITCH_CHAT_STATS_KEY,
   TWITCH_OAUTH_URL,
   TWITCH_USER_PROFILE_IMG_URL,
 } from '../common/constants';
 import axios, { AxiosResponse } from 'axios';
 import { TwitchOauthResponse } from '../common/entities/twitch/twitch-oauth-response.entity';
 import { TwitchStreamerInfoResponse } from '../common/entities/twitch/twitch-streamer-info-response.entity';
+import { ChatStats } from '../common/entities/get-chat-stats.entity';
 
 @Injectable()
 export class TasksService {
@@ -28,7 +30,41 @@ export class TasksService {
   async onModuleInit() {
     if (process.env.NODE_ENV !== 'development') {
       await this.getStreamerMetadata();
+      await this.getChatStats();
     }
+  }
+
+  @Cron('*/3 * * * *')
+  async getChatStats() {
+    this.logger.debug('Fetching chat stats');
+    const result = await this.messageModel
+      .aggregate<ChatStats>([
+        {
+          $group: {
+            _id: null,
+            totalMessages: { $sum: 1 },
+            uniqueUsers: { $addToSet: '$username' },
+            uniqueChannels: { $addToSet: '$channel' },
+          },
+        },
+        {
+          $project: {
+            _id: 0,
+            totalMessages: 1,
+            uniqueUsers: { $size: '$uniqueUsers' },
+            uniqueChannels: { $size: '$uniqueChannels' },
+          },
+        },
+      ])
+      .exec();
+
+    const stats: ChatStats = result[0] || {
+      totalMessages: 0,
+      uniqueUsers: 0,
+      uniqueChannels: 0,
+    };
+
+    await this.redisService.set(TWITCH_CHAT_STATS_KEY, JSON.stringify(stats));
   }
 
   @Cron('*/30 * * * *')
@@ -94,5 +130,20 @@ export class TasksService {
     );
 
     return response.data.access_token;
+  }
+
+  async getStats(): Promise<ChatStats> {
+    const stats = await this.redisService.get(TWITCH_CHAT_STATS_KEY);
+
+    if (!stats) {
+      return {
+        totalMessages: 0,
+        uniqueUsers: 0,
+        uniqueChannels: 0,
+      };
+    }
+
+    const chatStats = JSON.parse(stats) as ChatStats;
+    return chatStats;
   }
 }
