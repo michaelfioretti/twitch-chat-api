@@ -2,17 +2,18 @@ import { Injectable, Logger } from '@nestjs/common';
 import { Cron } from '@nestjs/schedule';
 import { Model } from 'mongoose';
 
-import { Message } from '../schemas/message.schema';
+import { Message } from '@src/schemas/message.schema';
 import { InjectModel } from '@nestjs/mongoose';
-import { RedisService } from '../redis/redis.service';
+import { RedisService } from '@src/redis/redis.service';
 import {
   MAX_STREAMERS_PER_USER_REQUEST,
   TWITCH_OAUTH_URL,
   TWITCH_USER_PROFILE_IMG_URL,
-} from '../common/constants';
+} from '@src/common/constants';
 import axios, { AxiosResponse } from 'axios';
-import { TwitchOauthResponse } from '../common/entities/twitch/twitch-oauth-response.entity';
-import { TwitchStreamerInfoResponse } from '../common/entities/twitch/twitch-streamer-info-response.entity';
+import { TwitchOauthResponse } from '@src/common/entities/twitch/twitch-oauth-response.entity';
+import { TwitchStreamerInfoResponse } from '@src/common/entities/twitch/twitch-streamer-info-response.entity';
+import { ChatStats } from '@src/common/entities/get-chat-stats.entity';
 
 @Injectable()
 export class TasksService {
@@ -29,6 +30,38 @@ export class TasksService {
     if (process.env.NODE_ENV !== 'development') {
       await this.getStreamerMetadata();
     }
+  }
+
+  @Cron('*/3 * * * *')
+  async getChatStats() {
+    const result = await this.messageModel
+      .aggregate<ChatStats>([
+        {
+          $group: {
+            _id: null,
+            totalMessages: { $sum: 1 },
+            uniqueUsers: { $addToSet: '$username' },
+            uniqueChannels: { $addToSet: '$channel' },
+          },
+        },
+        {
+          $project: {
+            _id: 0,
+            totalMessages: 1,
+            uniqueUsers: { $size: '$uniqueUsers' },
+            uniqueChannels: { $size: '$uniqueChannels' },
+          },
+        },
+      ])
+      .exec();
+
+    const stats: ChatStats = result[0] || {
+      totalMessages: 0,
+      uniqueUsers: 0,
+      uniqueChannels: 0,
+    };
+
+    await this.redisService.set('chat:stats', JSON.stringify(stats));
   }
 
   @Cron('*/30 * * * *')

@@ -9,9 +9,10 @@ import { Message, MessageSchema } from '@src/schemas/message.schema';
 import { AppController } from '@src/app.controller';
 import { AppService } from '@src/app.service';
 import { BitsModule } from '@src/bits/bits.module';
-import { RedisService } from '@src/redis/redis.service';
+import { RedisModule } from '@src/redis/redis.module';
 import { BitsService } from '@src/bits/bits.service';
 import { TasksService } from '@src/tasks/tasks.service';
+import { TasksModule } from '@src/tasks/tasks.module';
 import { ChatModule } from '@src/chat/chat.module';
 import { StreamerModule } from '@src/streamer/streamer.module';
 import {
@@ -38,8 +39,10 @@ import {
     BitsModule,
     ChatModule,
     StreamerModule,
+    TasksModule,
+    RedisModule,
   ],
   controllers: [AppController],
-  providers: [AppService, RedisService, BitsService, TasksService],
+  providers: [AppService, BitsService, TasksService],
 })
 export class AppModule {}
