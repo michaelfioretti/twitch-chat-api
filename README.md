@@ -5,7 +5,7 @@ A public NestJS-powered API for Twitch chat analytics, including total messages,
 [![codecov](https://codecov.io/gh/michaelfioretti/twitch-chat-api/branch/develop/graph/badge.svg?token=D2VOC2DTG4)](https://codecov.io/gh/michaelfioretti/twitch-chat-api)
 
 ## Video Overview
-Watch the YouTube video about this project [here](null)
+Watch the YouTube video about this project [here](https://youtu.be/dmEhb20MSyU)
 
 ## Tech Stack
 
