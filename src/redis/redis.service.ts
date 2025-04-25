@@ -44,6 +44,18 @@ export class RedisService implements OnModuleInit {
     await this.client.mset(...Object.entries(data).flat());
   }
 
+  async mget(keys: string[]): Promise<string[]> {
+    if (!keys.length) {
+      return [];
+    }
+    const results = await this.client.mget(keys);
+    return results.filter((result): result is string => result !== null);
+  }
+
+  async keys(pattern: string): Promise<string[]> {
+    return this.client.keys(pattern);
+  }
+
   buildKey(key: string, obj?: Record<string, any>): string {
     if (!obj) {
       return key;
